@@ -1,0 +1,139 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[45]:
+
+
+# Is there a relationship between humidity and temperature? 
+# What about between humidity and apparent temperature? 
+#Can you predict the apparent temperature given the humidity?
+
+import pandas as pd
+df=pd.read_csv(r"C:\Users\B V N DURGA VINAY\Downloads\weatherHistory.csv")
+print(df)
+
+
+# In[26]:
+
+
+df=df.drop(['Loud Cover','Daily Summary','Formatted Date'],axis=1)
+print(df)
+
+
+# In[27]:
+
+
+from sklearn import preprocessing
+l=preprocessing.LabelEncoder()
+df['Summary']=l.fit_transform(df['Summary'])
+df['Summary'].unique()
+
+
+# In[28]:
+
+
+df['Precip Type']=l.fit_transform(df['Precip Type'])
+df['Precip Type'].unique()
+
+
+# In[29]:
+
+
+df.isnull().sum()
+
+
+# In[30]:
+
+
+df['Wind Speed (km/h)'].fillna(value=df['Wind Speed (km/h)'].mean(),inplace=True)
+df
+
+
+# In[31]:
+
+
+df['Wind Bearing (degrees)'].fillna(value=df['Wind Bearing (degrees)'].mean(),inplace=True)
+df
+
+
+# In[32]:
+
+
+df.corr()
+
+
+# In[33]:
+
+
+#importing the libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+
+
+# In[35]:
+
+
+X=df[['Apparent Temperature (C)','Temperature (C)']]
+y=df.iloc[:,1]
+print(X)
+print(y)
+
+
+# In[36]:
+
+
+#data normalization
+X=preprocessing.StandardScaler().fit_transform(X)
+X
+
+
+# In[37]:
+
+
+#train test split
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=1)
+
+
+# In[38]:
+
+
+X_test.shape
+
+
+# In[39]:
+
+
+#training and predicting
+knmodel=KNeighborsClassifier(n_neighbors=5)
+knmodel.fit(X_train,y_train)
+
+
+# In[40]:
+
+
+y_predict=knmodel.predict(X_test)
+y_predict
+
+
+# In[42]:
+
+
+#accuracy
+from sklearn.metrics import accuracy_score
+acc=accuracy_score(y_test,y_predict)
+acc
+
+
+# In[43]:
+
+
+#confusion matrix
+from sklearn.metrics import confusion_matrix
+cm=confusion_matrix(y_test.values,y_predict)
+cm
+
